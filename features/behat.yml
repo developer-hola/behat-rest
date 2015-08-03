@@ -1,0 +1,8 @@
+default:
+  suites:
+    default:
+      contexts:
+        - Hola\Behat\FeatureContext:
+          - https://api.github.com
+      paths:
+        - %paths.base%

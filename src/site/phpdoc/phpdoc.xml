@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<phpdoc>
+    <title>Package Behat to Rest Api</title>
+    <parser>
+        <target>../../../reports/phpdoc</target>
+        <markers>
+            <item>TODO</item>
+            <item>FIXME</item>
+        </markers>
+        <extensions>
+            <extension>php</extension>
+            <extension>php3</extension>
+            <extension>phtml</extension>
+        </extensions>
+        <visibility></visibility>
+    </parser>
+    <transformer>
+        <target>../../../reports/phpdoc</target>
+    </transformer>
+    <logging>
+        <level>warn</level>
+        <paths>
+            <default>/tmp/phpdocumentor_{DATE}.log</default>
+            <errors>/tmp/phpdocumentor_{DATE}.errors.log</errors>
+        </paths>
+    </logging>
+    <transformations>
+        <template name="../../../vendor/phpdocumentor/templates/responsive" />
+    </transformations>
+    <files>
+        <directory>../../main/</directory>
+        <!--<ignore>test/*</ignore>-->
+    </files>
+</phpdoc>

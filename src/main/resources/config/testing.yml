@@ -1,0 +1,8 @@
+testing:
+  DATA_PATH: "%%TEST_PATH%%resources/fixtures/data/"
+  FILE_TYPES:
+    - JSON
+  ANNOTATE_MODEL: false
+  FIXTURES_PATH: "%%TEST_PATH%%resources/fixtures/"
+  MOCKS_PATH: "%%TEST_PATH%%resources/mocks/"
+  DEBUG: true

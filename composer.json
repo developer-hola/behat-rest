@@ -1,0 +1,31 @@
+{
+    "name": "hola/behat-rest",
+    "description": "Package Behat to Rest Api",
+    "license": "Apache-2.0",
+    "repositories": [ 
+        {
+            "type": "composer",
+            "url": "http://satis.hola.com/"
+        }
+    ],
+    "require": {
+        "phpmd/phpmd" : "2.2.3",
+        "hola/configuration": "0.2.6",
+        "behat/behat": "3.0.*",
+        "guzzlehttp/guzzle": "6.0.*"
+    },
+    
+    "require-dev": {
+        "ext-xdebug": "*",
+        "phpunit/phpunit": "3.7.*",
+        "phpdocumentor/phpdocumentor": "v2.5.0"
+    },
+
+    "bin": [],
+
+    "autoload": {
+        "psr-0": {
+            "Hola\\": ["src/main/", "src/test/"]
+        }
+    }
+}
