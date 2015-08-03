@@ -1,5 +1,19 @@
 <?php
-
+/**
+ * <strong>Name :  FeatureContext</strong><br>
+ * <strong>Desc :  Base Feature Context</strong><br>
+ *
+ * PHP version 5.5.22
+ *
+ * @category  BehatRest
+ * @package   Hola\Behat
+ * @author    Development <desarrollo@hola-internet.com>
+ * @copyright 2015 Hola.com
+ * @license   Apache 2 License http://www.apache.org/licenses/LICENSE-2.0.html
+ * @version   GIT: $Id$
+ * @link      http://www.hola.com
+ * @since     File available since Release 0.1.0
+ */
 
 namespace Hola\Behat;
 
