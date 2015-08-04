@@ -3,7 +3,7 @@
  * <strong>Name :  FeatureContext</strong><br>
  * <strong>Desc :  Base Feature Context</strong><br>
  *
- * PHP version 5.5.22
+ * PHP version 5.5.20
  *
  * @category  BehatRest
  * @package   Hola\Behat
@@ -19,6 +19,7 @@ namespace Hola\Behat;
 
 use Behat\Behat\Context\Context;
 use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Response;
 
 /**
  * Class FeatureContext
@@ -38,7 +39,7 @@ class FeatureContext implements Context
      * Http response
      *
      * @access protected
-     * @var
+     * @var Response
      */
     protected $response;
 
@@ -89,8 +90,22 @@ class FeatureContext implements Context
     public function theResponseShouldBeJson()
     {
         $data = json_decode($this->response->getBody(true));
-        if (empty($data)) { throw new Exception("Response was not JSON\n" . $this->response);
+
+        if (empty($data)) {
+            throw new \Exception("Response was not JSON\n" . $this->response);
        }
+    }
+
+    /**
+     * @Then /^the response should be JSON equals "([^"]*)"$/
+     */
+    public function theResponseShouldBeJsonEquals($json)
+    {
+        $response = $this->response->getBody(true);
+
+        if ($response != $json) {
+            throw new \Exception('Response JSON was not equals to ' . $json);
+        }
     }
 
     /**
@@ -110,12 +125,13 @@ class FeatureContext implements Context
     public function theResponseHasAProperty($propertyName)
     {
         $data = json_decode($this->response->getBody(true));
+
         if (!empty($data)) {
             if (!isset($data->$propertyName)) {
-                throw new Exception("Property '".$propertyName."' is not set!\n");
+                throw new \Exception("Property '".$propertyName."' is not set!\n");
             }
         } else {
-            throw new Exception("Response was not JSON\n" . $this->response->getBody(true));
+            throw new \Exception("Response was not JSON\n" . $this->response->getBody(true));
         }
     }
      /**
@@ -127,13 +143,29 @@ class FeatureContext implements Context
 
         if (!empty($data)) {
             if (!isset($data->$propertyName)) {
-                throw new Exception("Property '".$propertyName."' is not set!\n");
+                throw new \Exception("Property '".$propertyName."' is not set!\n");
             }
             if ($data->$propertyName !== $propertyValue) {
                 throw new \Exception('Property value mismatch! (given: '.$propertyValue.', match: '.$data->$propertyName.')');
             }
         } else {
-            throw new Exception("Response was not JSON\n" . $this->response->getBody(true));
+            throw new \Exception("Response was not JSON\n" . $this->response->getBody(true));
+        }
+    }
+
+    /**
+     * @Then /^the response contains (\d+) item(s)$/
+     */
+    public function theResponseContainsItems($items)
+    {
+        $data = json_decode($this->response->getBody(true));
+
+        if (!empty($data)) {
+            if (count($data) != $items) {
+                throw new \Exception("No contains $items items");
+            }
+        } else {
+            throw new \Exception("Response was not JSON\n" . $this->response->getBody(true));
         }
     }
 }
