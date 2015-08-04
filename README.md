@@ -3,10 +3,10 @@ Installing Behat-Rest
 
 The easiest way to install Behat is by using [Composer](https://getcomposer.org):
 
-```bash
+<pre>
 $> curl -sS https://getcomposer.org/installer | php
 $> php composer.phar require-dev hola/behat-rest
-```
+</pre>
 
 Configuration Behat-Rest
 ------------------------
