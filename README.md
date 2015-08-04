@@ -1,29 +1,34 @@
-# README #
+Installing Behat-Rest
+---------------------
 
-This README would normally document whatever steps are necessary to get your application up and running.
+The easiest way to install Behat is by using [Composer](https://getcomposer.org):
 
-### What is this repository for? ###
+```bash
+$> curl -sS https://getcomposer.org/installer | php
+$> php composer.phar require-dev hola/behat-rest
+```
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+Configuration Behat-Rest
+------------------------
 
-### How do I get set up? ###
+Create directory called "features" in root directory, into features directory create file "behat.yml" contains configuration: 
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+<pre>
+default:
+  suites:
+    default:
+      contexts:
+        - Hola\Behat\FeatureContext:
+          - https://url.api.to.test
+      paths:
+        - %paths.base%
+</pre>
 
-### Contribution guidelines ###
+News Features
+-------------
 
-* Writing tests
-* Code review
-* Other guidelines
+Create new features into features folder and execute with behat:
 
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
+<pre>
+vendor/bin/behat -c features/behat.yml features/
+</pre>
