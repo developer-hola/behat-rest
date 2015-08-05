@@ -22,6 +22,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Gherkin\Node\PyStringNode;
+use GuzzleHttp\Exception\RequestException;
 use PHPUnit_Framework_Assert as Assertions;
 
 /**
@@ -86,27 +87,34 @@ class WebApiContext implements Context
     protected function sendRequest($method, $uri, $options)
     {
         $request = null;
+        // Headers need services
         $headers = array(
             'headers' => array('Accept' => 'application/json')
         );
-        $options = array_merge($options, $headers['headers']);
 
-        switch($method) {
-            case 'GET':
-                $request = $this->client->get($uri, $options);
-                break;
-            case 'POST':
-                $request = $this->client->post($uri, $options);
-                break;
-            case 'PUT':
-                $request = $this->client->put($uri,$options);
-                break;
-            case 'DELETE':
-                $request = $this->client->delete($uri, $options);
-                break;
+        $options = array_merge($options, $headers);
+
+        try {
+            switch($method) {
+                case 'GET':
+                    $request = $this->client->get($uri, $options);
+                    break;
+                case 'POST':
+                    $request = $this->client->post($uri, $options);
+                    break;
+                case 'PUT':
+                    $request = $this->client->put($uri, $options);
+                    break;
+                case 'DELETE':
+                    $request = $this->client->delete($uri, $options);
+                    break;
+            }
+
+            $this->response = $request;
+        // Control exception for http codes 4xx
+        } catch(RequestException $exception) {
+            $this->response = $exception->getResponse();
         }
-
-        $this->response = $request;
     }
 
     /**
@@ -223,18 +231,6 @@ class WebApiContext implements Context
     }
 
     /**
-     * @Then /^the response should be JSON equals "([^"]*)"$/
-     */
-    public function theResponseShouldBeJsonEquals($json)
-    {
-        $response = $this->response->getBody(true);
-
-        if ($response != $json) {
-            throw new \Exception('Response JSON was not equals to ' . $json);
-        }
-    }
-
-    /**
      * Checks that response has specific status code.
      *
      * @param string $httpStatus status code
@@ -299,7 +295,7 @@ class WebApiContext implements Context
     public function theResponseShouldContainJson(PyStringNode $jsonString)
     {
         $etalon = json_decode($this->replacePlaceHolder($jsonString->getRaw()), true);
-        $actual = $this->response;
+        $actual = json_decode((string)$this->response->getBody(), true);
 
         if (null === $etalon) {
             throw new \RuntimeException(
@@ -315,11 +311,13 @@ class WebApiContext implements Context
     }
 
     /**
+     * Checks that response body contains X items
+     *
      * @Then /^the response contains (\d+) item(s)$/
      */
     public function theResponseContainsItems($items)
     {
-        $data = json_decode($this->response->getBody(true));
+        $data = json_decode((string)$this->response->getBody(), true);
 
         if (!empty($data)) {
             if (count($data) != $items) {
