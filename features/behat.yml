@@ -2,7 +2,7 @@ default:
   suites:
     default:
       contexts:
-        - Hola\Behat\FeatureContext:
-          - https://api.github.com
+        - Hola\Behat\WebApiContext:
+          - http://zdev.hola.com
       paths:
         - %paths.base%
