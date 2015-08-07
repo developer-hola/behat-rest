@@ -89,7 +89,9 @@ class WebApiContext implements Context
         $request = null;
         // Headers need services
         $headers = array(
-            'headers' => array('Accept' => 'application/json')
+            'headers' => array('Accept' => 'application/json',
+                'content-type' => 'application/json'
+            )
         );
 
         $options = array_merge($options, $headers);
