@@ -7,3 +7,7 @@ Behat_Rest-0.1.1 (07/08/2015)
 - Renaming the context, mode change requests and make more features
 - Control exceptions to http codes 400
 - Resolve bugs to get body response
+
+Behat_Rest-0.1.2 (07/08/2015)
+==============================
+- Change uri, now in config file, features files only need resource to test. To avoid problems
