@@ -3,6 +3,6 @@ default:
     default:
       contexts:
         - Hola\Behat\WebApiContext:
-          - http://zdev.hola.com
+          - http://zdev.hola.com/video-service/
       paths:
         - %paths.base%

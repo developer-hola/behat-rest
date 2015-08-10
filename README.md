@@ -19,10 +19,11 @@ default:
     default:
       contexts:
         - Hola\Behat\WebApiContext:
-          - https://url.api.to.test
+          - https://url.api.to.test/uri/
       paths:
         - %paths.base%
 </pre>
+Always end url with /
 
 News Features
 -------------
