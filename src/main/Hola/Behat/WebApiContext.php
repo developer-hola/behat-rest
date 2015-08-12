@@ -138,9 +138,8 @@ class WebApiContext implements Context
 
     /**
      * Initializes context.
-     * Every scenario gets it's own context object.
      *
-     * @param array $parameters context parameters (set them up through behat.yml)
+     * @param string $baseUrl base url of service
      */
     public function __construct($baseUrl)
     {
@@ -221,6 +220,10 @@ class WebApiContext implements Context
     }
 
     /**
+     * Check that response is a JSON
+     *
+     * @throws \Exception
+     *
      * @Then /^the response should be JSON$/
      */
     public function theResponseShouldBeJson()
@@ -250,7 +253,13 @@ class WebApiContext implements Context
     }
 
     /**
-     * @Given /^the response has a "([^"]*)" property$/
+     * Check that response has a property
+     *
+     * @param string $propertyName name property
+     *
+     * @throws \Exception
+     *
+     * @Then /^the response has a "([^"]*)" property$/
      */
     public function theResponseHasAProperty($propertyName)
     {
@@ -264,7 +273,42 @@ class WebApiContext implements Context
             throw new \Exception("Response was not JSON\n" . $this->response->getBody(true));
         }
     }
+
+
     /**
+     * Check the property is equal to passed string
+     *
+     * @param string $propertyName  name property
+     * @param string $propertyValue property value
+     *
+     * @throws \Exception
+     *
+     * @Then /^the "([^"]*)" property equals number(\d+)$/
+     */
+    public function thePropertyEqualsNumber($propertyName, $propertyValue)
+    {
+        $data = json_decode($this->response->getBody(true));
+
+        if (!empty($data)) {
+            if (!isset($data->$propertyName)) {
+                throw new \Exception("Property '".$propertyName."' is not set!\n");
+            }
+            if ($data->$propertyName !== $propertyValue) {
+                throw new \Exception('Property value mismatch! (given: '.$propertyValue.', match: '.$data->$propertyName.')');
+            }
+        } else {
+            throw new \Exception("Response was not JSON\n" . $this->response->getBody(true));
+        }
+    }
+
+    /**
+     * Check the property is equal to passed string
+     *
+     * @param string $propertyName  name property
+     * @param string $propertyValue property value
+     *
+     * @throws \Exception
+     *
      * @Then /^the "([^"]*)" property equals "([^"]*)"$/
      */
     public function thePropertyEquals($propertyName, $propertyValue)
@@ -314,6 +358,10 @@ class WebApiContext implements Context
 
     /**
      * Checks that response body contains X items
+     *
+     * @param integer $items items response
+     *
+     * @throws \Exception
      *
      * @Then /^the response contains (\d+) item(s)$/
      */
