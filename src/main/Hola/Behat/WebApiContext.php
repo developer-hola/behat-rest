@@ -283,7 +283,7 @@ class WebApiContext implements Context
      *
      * @throws \Exception
      *
-     * @Then /^the "([^"]*)" property equals number(\d+)$/
+     * @Then /^the "([^"]*)" property equals number (\d+)$/
      */
     public function thePropertyEqualsNumber($propertyName, $propertyValue)
     {
