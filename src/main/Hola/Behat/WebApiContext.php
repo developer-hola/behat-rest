@@ -293,7 +293,7 @@ class WebApiContext implements Context
             if (!isset($data->$propertyName)) {
                 throw new \Exception("Property '".$propertyName."' is not set!\n");
             }
-            if ($data->$propertyName !== $propertyValue) {
+            if ($data->$propertyName !== (int)$propertyValue) {
                 throw new \Exception('Property value mismatch! (given: '.$propertyValue.', match: '.$data->$propertyName.')');
             }
         } else {
