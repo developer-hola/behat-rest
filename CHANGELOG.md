@@ -11,3 +11,7 @@ Behat_Rest-0.1.1 (07/08/2015)
 Behat_Rest-0.1.2 (07/08/2015)
 ==============================
 - Change uri, now in config file, features files only need resource to test. To avoid problems
+
+Behat_Rest-0.1.3 (12/08/2015)
+==============================
+- Add new function to compare response property with integers
