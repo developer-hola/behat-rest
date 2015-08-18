@@ -15,3 +15,7 @@ Behat_Rest-0.1.2 (07/08/2015)
 Behat_Rest-0.1.3 (12/08/2015)
 ==============================
 - Add new function to compare response property with integers
+
+Behat_Rest-0.1.4 (19/08/2015)
+==============================
+- Updated dependencies (`hola/configuration` to `0.2.*`)

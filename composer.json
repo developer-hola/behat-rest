@@ -2,7 +2,7 @@
     "name": "hola/behat-rest",
     "description": "Package Behat to Rest Api",
     "license": "Apache-2.0",
-    "repositories": [ 
+    "repositories": [
         {
             "type": "composer",
             "url": "http://satis.hola.com/"
@@ -10,11 +10,11 @@
     ],
     "require": {
         "phpmd/phpmd" : "2.2.3",
-        "hola/configuration": "0.2.6",
+        "hola/configuration": "0.2.*",
         "behat/behat": "3.0.*",
         "guzzlehttp/guzzle": "6.0.*"
     },
-    
+
     "require-dev": {
         "ext-xdebug": "*",
         "phpunit/phpunit": "3.7.*",
