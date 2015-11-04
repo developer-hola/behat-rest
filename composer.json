@@ -9,8 +9,8 @@
         }
     ],
     "require": {
-        "phpmd/phpmd" : "2.2.3",
-        "hola/configuration": "0.2.6",
+        "phpmd/phpmd" : "1.5.*",
+        "hola/configuration": "0.3.*",
         "behat/behat": "3.0.*",
         "guzzlehttp/guzzle": "6.0.*"
     },
