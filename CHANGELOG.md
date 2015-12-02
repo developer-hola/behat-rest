@@ -23,4 +23,7 @@ Behat_Rest-0.1.4 (19/08/2015)
 Behat_Rest-0.1.5 (04/11/2015)
 ==============================
 - Update composer packages to common versions
-=======
+
+Behat_Rest-0.1.6 (02/12/2015)
+==============================
+- Add patch action

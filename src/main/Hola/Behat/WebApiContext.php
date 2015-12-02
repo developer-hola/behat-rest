@@ -107,6 +107,9 @@ class WebApiContext implements Context
                 case 'PUT':
                     $request = $this->client->put($uri, $options);
                     break;
+                case 'PATCH':
+                    $request = $this->client->patch($uri, $options);
+                    break;
                 case 'DELETE':
                     $request = $this->client->delete($uri, $options);
                     break;
