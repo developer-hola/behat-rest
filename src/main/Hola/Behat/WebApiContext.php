@@ -80,24 +80,26 @@ class WebApiContext implements Context
      * @param string $method  method http
      * @param string $uri     uri service
      * @param array  $options options to request
+     * @param array  $headers optional headers to request
      *
      * @access protected
      * @return void
      */
-    protected function sendRequest($method, $uri, $options)
+    protected function sendRequest($method, $uri, $options, $headers = array())
     {
         $request = null;
         // Headers need services
-        $headers = array(
-            'headers' => array('Accept' => 'application/json',
-                'content-type' => 'application/json'
-            )
-        );
-
+        if (empty($headers)) {
+            $headers = array(
+                'headers' => array('Accept'       => 'application/json',
+                                   'content-type' => 'application/json'
+                )
+            );
+        }
         $options = array_merge($options, $headers);
 
         try {
-            switch($method) {
+            switch ($method) {
                 case 'GET':
                     $request = $this->client->get($uri, $options);
                     break;
@@ -116,8 +118,8 @@ class WebApiContext implements Context
             }
 
             $this->response = $request;
-        // Control exception for http codes 4xx
-        } catch(RequestException $exception) {
+            // Control exception for http codes 4xx
+        } catch (RequestException $exception) {
             $this->response = $exception->getResponse();
         }
     }
@@ -162,6 +164,24 @@ class WebApiContext implements Context
     public function iSendARequest($method, $uri)
     {
         $this->sendRequest($method, $uri, array());
+    }
+
+    /**
+     * Sends HTTP request to specific relative URL accepting text/html
+     *
+     * @param string $method request method
+     * @param string $uri    relative url
+     *
+     * @When /^(?:I )?send a ([A-Z]+) request to "([^"]+)" Accept HTML$/
+     */
+    public function iSendARequestHTML($method, $uri)
+    {
+        $this->sendRequest(
+            $method, $uri, array(), array(
+            'headers' => array('Accept'       => 'text/html',
+                               'content-type' => 'text/html'
+            ))
+        );
     }
 
     /**
@@ -223,6 +243,43 @@ class WebApiContext implements Context
     }
 
     /**
+     * Sends HTTP request to specific URL with query params from PyString.
+     *
+     * @param string       $method request method
+     * @param string       $uri    relative uri
+     * @param PyStringNode $body   request body
+     *
+     * @When /^(?:I )?send a ([A-Z]+) request to "([^"]+)" with query params:$/
+     */
+    public function iSendARequestWithQueryParams($method, $uri, PyStringNode $body)
+    {
+        $body = $this->replacePlaceHolder(trim($body));
+        $fields = implode('&', explode("\n", $body));
+        $this->sendRequest($method, $uri . '?' . $fields, array());
+    }
+
+    /**
+     * Sends HTTP request to specific URL with query params from PyString.
+     *
+     * @param string       $method request method
+     * @param string       $uri    relative uri
+     * @param PyStringNode $body   request body
+     *
+     * @When /^(?:I )?send a ([A-Z]+) request to "([^"]+)" Accept HTML with query params:$/
+     */
+    public function iSendAHTMLRequestWithQueryParams($method, $uri, PyStringNode $body)
+    {
+        $body = $this->replacePlaceHolder(trim($body));
+        $fields = implode('&', explode("\n", $body));
+        $this->sendRequest(
+            $method, $uri . '?' . $fields, array(), array(
+            'headers' => array('Accept'       => 'text/html',
+                               'content-type' => 'text/html'
+            ))
+        );
+    }
+
+    /**
      * Check that response is a JSON
      *
      * @throws \Exception
@@ -239,6 +296,21 @@ class WebApiContext implements Context
     }
 
     /**
+     * Check that response is a HTML
+     *
+     * @throws \Exception
+     *
+     * @Then /^the response should be HTML$/
+     */
+    public function theResponseShouldBeHtml()
+    {
+        $content_type = $this->response->getHeader('Content-Type');
+        if (!in_array('text/html', $content_type)) {
+            throw new \Exception("Response was not HTML\n" . json_encode($content_type));
+        }
+    }
+
+    /**
      * Checks that response has specific status code.
      *
      * @param string $httpStatus status code
@@ -250,8 +322,10 @@ class WebApiContext implements Context
     public function theResponseStatusCodeShouldBe($httpStatus)
     {
         if ((string)$this->response->getStatusCode() !== $httpStatus) {
-            throw new \Exception('HTTP code does not match '.$httpStatus.
-                ' (actual: '.$this->response->getStatusCode().')');
+            throw new \Exception(
+                'HTTP code does not match ' . $httpStatus .
+                ' (actual: ' . $this->response->getStatusCode() . ')'
+            );
         }
     }
 
@@ -270,7 +344,7 @@ class WebApiContext implements Context
 
         if (!empty($data)) {
             if (!isset($data->$propertyName)) {
-                throw new \Exception("Property '".$propertyName."' is not set!\n");
+                throw new \Exception("Property '" . $propertyName . "' is not set!\n");
             }
         } else {
             throw new \Exception("Response was not JSON\n" . $this->response->getBody(true));
@@ -294,10 +368,12 @@ class WebApiContext implements Context
 
         if (!empty($data)) {
             if (!isset($data->$propertyName)) {
-                throw new \Exception("Property '".$propertyName."' is not set!\n");
+                throw new \Exception("Property '" . $propertyName . "' is not set!\n");
             }
             if ($data->$propertyName !== (int)$propertyValue) {
-                throw new \Exception('Property value mismatch! (given: '.$propertyValue.', match: '.$data->$propertyName.')');
+                throw new \Exception(
+                    'Property value mismatch! (given: ' . $propertyValue . ', match: ' . $data->$propertyName . ')'
+                );
             }
         } else {
             throw new \Exception("Response was not JSON\n" . $this->response->getBody(true));
@@ -320,10 +396,12 @@ class WebApiContext implements Context
 
         if (!empty($data)) {
             if (!isset($data->$propertyName)) {
-                throw new \Exception("Property '".$propertyName."' is not set!\n");
+                throw new \Exception("Property '" . $propertyName . "' is not set!\n");
             }
             if ($data->$propertyName !== $propertyValue) {
-                throw new \Exception('Property value mismatch! (given: '.$propertyValue.', match: '.$data->$propertyName.')');
+                throw new \Exception(
+                    'Property value mismatch! (given: ' . $propertyValue . ', match: ' . $data->$propertyName . ')'
+                );
             }
         } else {
             throw new \Exception("Response was not JSON\n" . $this->response->getBody(true));
