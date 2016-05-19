@@ -27,3 +27,7 @@ Behat_Rest-0.1.5 (04/11/2015)
 Behat_Rest-0.1.6 (02/12/2015)
 ==============================
 - Add patch action
+
+Behat_Rest-0.2.0 (19/05/2016)
+=============================
+- Updated dependencies (`hola/configuration` to `0.4.0-BETA1`)
