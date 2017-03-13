@@ -32,6 +32,10 @@ Behat_Rest-0.2.0 (19/05/2016)
 =============================
 - Updated dependencies (`hola/configuration` to `0.4.0-BETA1`)
 
-Behat_Rest-0.2.1 (  14/06/2016)
+Behat_Rest-0.2.1 (14/06/2016)
 ===============================
 - Updated dependencies (`hola/configuration` to `0.4.*`)
+
+Behat_Rest-0.2.2 (13/03/2017)
+=============================
+- Add functions when a GET is needed before the action
