@@ -156,8 +156,31 @@ class WebApiContext implements Context
     /**
      * Sends HTTP request to specific relative URL.
      *
-     * @param string $method request method
-     * @param string $uri    relative url
+     * @param string $method     request method
+     * @param string $uri        relative url
+     * @param string $identifier identifier
+     *
+     * @When /^(?:I )?send a ([A-Z]+) request to "([^"]+)" need GET "([^"]+)"$/
+     */
+    public function iSendARequestWithPreGet($method, $uri, $identifier = null)
+    {
+        $parts = parse_url($uri);
+
+        if (!empty($identifier) && array_key_exists('query', $parts)) {
+            $this->sendRequest('GET', $uri, array());
+            $body = json_decode((string)$this->response->getBody(), true);
+            $identifier = $body[0][$identifier];
+            $uri = $parts['path'] . "/$identifier";
+        }
+
+        $this->sendRequest($method, $uri, array());
+    }
+
+    /**
+     * Sends HTTP request to specific relative URL.
+     *
+     * @param string $method     request method
+     * @param string $uri        relative url
      *
      * @When /^(?:I )?send a ([A-Z]+) request to "([^"]+)"$/
      */
@@ -182,6 +205,38 @@ class WebApiContext implements Context
                                'content-type' => 'text/html'
             ))
         );
+    }
+
+    /**
+     * Sends HTTP request to specific URL with field values from Table.
+     *
+     * @param string    $method     request method
+     * @param string    $uri        relative uri
+     * @param string    $identifier identifier to retrieve
+     * @param TableNode $post       table of post values
+     *
+     * @When /^(?:I )?send a ([A-Z]+) request to "([^"]+)" need GET "([^"]*)" with values:$/
+     */
+    public function iSendARequestWithValuesWithPreGet($method, $uri, $identifier = null, TableNode $post)
+    {
+        $fields = array();
+
+        $parts = parse_url($uri);
+
+        if (!empty($identifier) && array_key_exists('query', $parts)) {
+            $this->sendRequest('GET', $uri, array());
+            $body = json_decode((string)$this->response->getBody(), true);
+            $identifier = $body[0][$identifier];
+            $uri = $parts['path'] . "/$identifier";
+        }
+
+        foreach ($post->getRowsHash() as $key => $val) {
+            $fields[$key] = $this->replacePlaceHolder($val);
+        }
+
+        $bodyOption = json_encode($fields);
+
+        $this->sendRequest($method, $uri, array('body' => $bodyOption));
     }
 
     /**
@@ -340,10 +395,16 @@ class WebApiContext implements Context
      */
     public function theResponseHasAProperty($propertyName)
     {
-        $data = json_decode($this->response->getBody(true));
+        $body = json_decode((string)$this->response->getBody(), true);
+        if (array_key_exists(0, $body)) {
+            $data = $body[0];
+        } else {
+            $data = $body;
+        }
+
 
         if (!empty($data)) {
-            if (!isset($data->$propertyName)) {
+            if (!isset($data[$propertyName])) {
                 throw new \Exception("Property '" . $propertyName . "' is not set!\n");
             }
         } else {
@@ -398,7 +459,7 @@ class WebApiContext implements Context
             if (!isset($data->$propertyName)) {
                 throw new \Exception("Property '" . $propertyName . "' is not set!\n");
             }
-            if ($data->$propertyName !== $propertyValue) {
+            if ($data->$propertyName != $propertyValue) {
                 throw new \Exception(
                     'Property value mismatch! (given: ' . $propertyValue . ', match: ' . $data->$propertyName . ')'
                 );
