@@ -19,7 +19,7 @@ Scenario: Get unsucessfull to video-service/images, needs params
         "error":{
           "http_code":400,
           "message":"Field id is mandatory",
-          "code":"MissingParameters"
+          "code":"400"
         }
       }
   """"
