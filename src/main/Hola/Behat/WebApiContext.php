@@ -230,8 +230,16 @@ class WebApiContext implements Context
             $uri = $parts['path'] . "/$identifier";
         }
 
-        foreach ($post->getRowsHash() as $key => $val) {
-            $fields[$key] = $this->replacePlaceHolder($val);
+        $table = $post->getTable();
+
+        foreach ($table as $key => $value) {
+            if (sizeof($value) == 3) {
+                settype($value[1], $value[2]);
+                $fields[$value[0]] = $value[1];
+            } else {
+                settype($value[1], "string");
+                $fields[$value[0]] = $value[1];
+            }
         }
 
         $bodyOption = json_encode($fields);
@@ -252,8 +260,16 @@ class WebApiContext implements Context
     {
         $fields = array();
 
-        foreach ($post->getRowsHash() as $key => $val) {
-            $fields[$key] = $this->replacePlaceHolder($val);
+        $table = $post->getTable();
+
+        foreach ($table as $key => $value) {
+            if (sizeof($value) == 3) {
+                settype($value[1], $value[2]);
+                $fields[$value[0]] = $value[1];
+            } else {
+                settype($value[1], "string");
+                $fields[$value[0]] = $value[1];
+            }
         }
 
         $bodyOption = json_encode($fields);
