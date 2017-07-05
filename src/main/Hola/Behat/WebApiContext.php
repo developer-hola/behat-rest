@@ -18,6 +18,7 @@
 namespace Hola\Behat;
 
 use Behat\Behat\Context\Context;
+use Behat\Behat\Tester\Exception\PendingException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use Behat\Gherkin\Node\TableNode;
@@ -92,7 +93,7 @@ class WebApiContext implements Context
         if (empty($headers)) {
             $headers = array(
                 'headers' => array('Accept'       => 'application/json',
-                                   'content-type' => 'application/json'
+                    'content-type' => 'application/json'
                 )
             );
         }
@@ -169,7 +170,7 @@ class WebApiContext implements Context
         if (!empty($identifier) && array_key_exists('query', $parts)) {
             $this->sendRequest('GET', $uri, array());
             $body = json_decode((string)$this->response->getBody(), true);
-            $identifier = $body[0][$identifier];
+            $identifier = $body['items'][0][$identifier];
             $uri = $parts['path'] . "/$identifier";
         }
 
@@ -201,9 +202,9 @@ class WebApiContext implements Context
     {
         $this->sendRequest(
             $method, $uri, array(), array(
-            'headers' => array('Accept'       => 'text/html',
-                               'content-type' => 'text/html'
-            ))
+                'headers' => array('Accept'       => 'text/html',
+                    'content-type' => 'text/html'
+                ))
         );
     }
 
@@ -226,7 +227,7 @@ class WebApiContext implements Context
         if (!empty($identifier) && array_key_exists('query', $parts)) {
             $this->sendRequest('GET', $uri, array());
             $body = json_decode((string)$this->response->getBody(), true);
-            $identifier = $body[0][$identifier];
+            $identifier = $body['items'][0][$identifier];
             $uri = $parts['path'] . "/$identifier";
         }
 
@@ -344,9 +345,9 @@ class WebApiContext implements Context
         $fields = implode('&', explode("\n", $body));
         $this->sendRequest(
             $method, $uri . '?' . $fields, array(), array(
-            'headers' => array('Accept'       => 'text/html',
-                               'content-type' => 'text/html'
-            ))
+                'headers' => array('Accept'       => 'text/html',
+                    'content-type' => 'text/html'
+                ))
         );
     }
 
@@ -412,12 +413,11 @@ class WebApiContext implements Context
     public function theResponseHasAProperty($propertyName)
     {
         $body = json_decode((string)$this->response->getBody(), true);
-        if (array_key_exists(0, $body)) {
-            $data = $body[0];
+        if (array_key_exists('items', $body)) {
+            $data = $body['items'];
         } else {
             $data = $body;
         }
-
 
         if (!empty($data)) {
             if (!isset($data[$propertyName])) {
@@ -442,6 +442,7 @@ class WebApiContext implements Context
     public function thePropertyEqualsNumber($propertyName, $propertyValue)
     {
         $data = json_decode($this->response->getBody(true));
+        $data = $data->items;
 
         if (!empty($data)) {
             if (!isset($data->$propertyName)) {
@@ -470,6 +471,7 @@ class WebApiContext implements Context
     public function thePropertyEquals($propertyName, $propertyValue)
     {
         $data = json_decode($this->response->getBody(true));
+        $data = $data->items;
 
         if (!empty($data)) {
             if (!isset($data->$propertyName)) {
@@ -526,6 +528,7 @@ class WebApiContext implements Context
     public function theResponseContainsItems($items)
     {
         $data = json_decode((string)$this->response->getBody(), true);
+        $data = $data['items'];
 
         if (!empty($data)) {
             if (count($data) != $items) {
@@ -533,6 +536,19 @@ class WebApiContext implements Context
             }
         } else {
             throw new \Exception("Response was not JSON\n" . $this->response->getBody(true));
+        }
+    }
+
+    /**
+     * @Given /^the response should contain pagination keys$/
+     */
+    public function theResponseShouldContainPaginationKeys()
+    {
+        $body = json_decode((string)$this->response->getBody(), true);
+        if (!array_key_exists('total', $body)
+            || !array_key_exists('numRows', $body)) {
+
+            throw new \Exception("Pagination fields not found!");
         }
     }
 }
