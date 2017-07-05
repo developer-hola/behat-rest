@@ -235,8 +235,12 @@ class WebApiContext implements Context
 
         foreach ($table as $key => $value) {
             if (sizeof($value) == 3) {
-                settype($value[1], $value[2]);
-                $fields[$value[0]] = $value[1];
+                if ($value[2] == "array" || $value[2] == "Array") {
+                    $fields[$value[0]] = json_decode($value[1], true);
+                } else {
+                    settype($value[1], $value[2]);
+                    $fields[$value[0]] = $value[1];
+                }
             } else {
                 settype($value[1], "string");
                 $fields[$value[0]] = $value[1];
@@ -265,8 +269,12 @@ class WebApiContext implements Context
 
         foreach ($table as $key => $value) {
             if (sizeof($value) == 3) {
-                settype($value[1], $value[2]);
-                $fields[$value[0]] = $value[1];
+                if ($value[2] == "array" || $value[2] == "Array") {
+                    $fields[$value[0]] = json_decode($value[1], true);
+                } else {
+                    settype($value[1], $value[2]);
+                    $fields[$value[0]] = $value[1];
+                }
             } else {
                 settype($value[1], "string");
                 $fields[$value[0]] = $value[1];
