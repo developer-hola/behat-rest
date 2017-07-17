@@ -187,7 +187,7 @@ class WebApiContext implements Context
      */
     public function iSendARequest($method, $uri)
     {
-        $this->sendRequest($method, $uri, array());
+        $this->sendRequest($method, $this->baseUrl.$uri, array());
     }
 
     /**
