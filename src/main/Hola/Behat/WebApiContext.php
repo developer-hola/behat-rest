@@ -371,7 +371,7 @@ class WebApiContext implements Context
         $data = json_decode($this->response->getBody(true));
 
         if (empty($data)) {
-            throw new \Exception("Response was not JSON\n" . $this->response);
+            throw new \Exception("Response was not JSON\n" . $data);
         }
     }
 
@@ -422,7 +422,7 @@ class WebApiContext implements Context
     {
         $body = json_decode((string)$this->response->getBody(), true);
         if (array_key_exists('items', $body)) {
-            $data = $body['items'];
+            $data = $body['items'][0];
         } else {
             $data = $body;
         }
@@ -449,14 +449,18 @@ class WebApiContext implements Context
      */
     public function thePropertyEqualsNumber($propertyName, $propertyValue)
     {
-        $data = json_decode($this->response->getBody(true));
-        $data = $data->items;
+        $body = json_decode((string)$this->response->getBody(), true);
+        if (array_key_exists('items', $body)) {
+            $data = $body['items'][0];
+        } else {
+            $data = $body;
+        }
 
         if (!empty($data)) {
-            if (!isset($data->$propertyName)) {
+            if (!isset($data[$propertyName])) {
                 throw new \Exception("Property '" . $propertyName . "' is not set!\n");
             }
-            if ($data->$propertyName !== (int)$propertyValue) {
+            if ($data[$propertyName] !== (int)$propertyValue) {
                 throw new \Exception(
                     'Property value mismatch! (given: ' . $propertyValue . ', match: ' . $data->$propertyName . ')'
                 );
@@ -478,14 +482,18 @@ class WebApiContext implements Context
      */
     public function thePropertyEquals($propertyName, $propertyValue)
     {
-        $data = json_decode($this->response->getBody(true));
-        $data = $data->items;
+        $body = json_decode((string)$this->response->getBody(), true);
+        if (array_key_exists('items', $body)) {
+            $data = $body['items'][0];
+        } else {
+            $data = $body;
+        }
 
         if (!empty($data)) {
-            if (!isset($data->$propertyName)) {
+            if (!isset($data[$propertyName])) {
                 throw new \Exception("Property '" . $propertyName . "' is not set!\n");
             }
-            if ($data->$propertyName != $propertyValue) {
+            if ($data[$propertyName] != $propertyValue) {
                 throw new \Exception(
                     'Property value mismatch! (given: ' . $propertyValue . ', match: ' . $data->$propertyName . ')'
                 );
@@ -535,8 +543,12 @@ class WebApiContext implements Context
      */
     public function theResponseContainsItems($items)
     {
-        $data = json_decode((string)$this->response->getBody(), true);
-        $data = $data['items'];
+        $body = json_decode((string)$this->response->getBody(), true);
+        if (array_key_exists('items', $body)) {
+            $data = $body['items'];
+        } else {
+            $data = $body;
+        }
 
         if (!empty($data)) {
             if (count($data) != $items) {
