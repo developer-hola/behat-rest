@@ -14,6 +14,7 @@
  * @link      http://www.hola.com
  * @since     File available since Release 0.1
  */
+use Symfony\Component\Yaml\Yaml;
 
 date_default_timezone_set('UTC');
 
@@ -32,30 +33,24 @@ $loader = include __DIR__ . '/../../../vendor/autoload.php';
 
 $loader->setUseIncludePath(true);
 
-// Instantiating Config Mediator
-$configuration = new Hola\Configuration\ConfigMediator(__DIR__ . "/../../../");
 
-// Setting our common variables.
-$configuration->pushConfigurationFromFiles(
-    array(__DIR__ . "/../resources/config/config.yml"),
-    array("common")
-);
+$configuration = Yaml::parseFile('/../resources/config/config.yml');
 
-// Setting our environment variables.
-$configuration->pushConfigurationFromFiles(
-    array(
-        $configuration->getProperty(
-            "CONFIGURATION_FILES_".
-            strtoupper($php_env)
-        )
-    ),
-    array($php_env)
-);
+$envConfiguration = Yaml::parseFile($configuration["CONFIGURATION_FILES_".strtoupper($php_env)]);
 
+$vendorPath = $configuration["VENDOR_PATH"];
+$mocksPath = $configuration["MOCKS_PATH"];
+
+if(isset($envConfiguration["VENDOR_PATH"])){
+    $vendorPath = $envConfiguration["VENDOR_PATH"];
+}
+if(isset($envConfiguration["MOCKS_PATH"])){
+    $mocksPath = $envConfiguration["MOCKS_PATH"];
+}
 set_include_path(
     '.' .
-    PATH_SEPARATOR . $configuration->getProperty("VENDOR_PATH") .
-    PATH_SEPARATOR . $configuration->getProperty("MOCKS_PATH") .
+    PATH_SEPARATOR . $vendorPath .
+    PATH_SEPARATOR . $mocksPath .
     PATH_SEPARATOR . get_include_path()
 );
 

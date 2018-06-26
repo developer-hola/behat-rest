@@ -10,7 +10,6 @@
   ],
   "require": {
     "phpmd/phpmd": "2.*",
-    "hola/configuration": "0.4.*",
     "behat/behat": "3.4.*",
     "guzzlehttp/guzzle": "6.*"
   },
