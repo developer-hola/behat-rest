@@ -1,5 +1,5 @@
 {
-  "name": "hola/behat-rest",
+  "name": "developer-hola/behat-rest",
   "description": "Package Behat to Rest Api",
   "license": "Apache-2.0",
   "repositories": [
